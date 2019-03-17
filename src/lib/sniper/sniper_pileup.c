@@ -216,7 +216,7 @@ int get_next_pos(bam_plbuf_t *buf,bamFile fp) {
 
         double time_elapsed = ((double)tend.tv_sec*1.0e6 + 1.0e-3*tend.tv_nsec) - 
                                 ((double)tstart.tv_sec*1.0e6 + 1.0e-3*tstart.tv_nsec);
-        fprintf(read_lats, '%lf\n', time_elapsed);
+        fprintf(read_lats, "%lf\n", time_elapsed);
         if (ret >= 0) {
             if (!(b->core.flag & buf->flag_mask) && !(b->core.qual < buf->mapq_thresh)) { //skip these reads 
                 bam_copy1(&buf->tail->b, b);
@@ -274,7 +274,7 @@ int bam_sspileup_file(bamFile fp1, bamFile fp2, int mask, int thresh, bam_sspile
             clock_gettime(CLOCK_MONOTONIC, &tend);
             double time_elapsed = ((double)tend.tv_sec*1.0e6 + 1.0e-3*tend.tv_nsec) - 
                                 ((double)tstart.tv_sec*1.0e6 + 1.0e-3*tstart.tv_nsec);
-            fprintf(compute_lats, '%lf\n', time_elapsed);
+            fprintf(compute_lats, "%lf\n", time_elapsed);
         }
     }
     bam_plbuf_reset(buf1);  //clear out any remaining data (I hope)
