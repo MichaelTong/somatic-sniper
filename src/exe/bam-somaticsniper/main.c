@@ -12,10 +12,14 @@
 #include <math.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
 
 static const char *_default_normal_sample_id = "NORMAL";
 static const char *_default_tumor_sample_id = "TUMOR";
 static const char *_default_output_format = "classic";
+
+FILE *read_lats;
+FILE *compute_lats;
 
 void version_info() {
     printf("Somatic Sniper version (%s) (commit %s)", __g_prog_version, __g_commit_hash);
@@ -134,6 +138,22 @@ int main(int argc, char *argv[]) {
     d->h2 = bam_header_read(fp2);
     sam_header_parse_rg(d->h2);
     FILE* snp_fh = fopen(argv[optind+2], "w");
+    
+    /* Added file logic for recording latencies */
+    const char *read_add = '_read_lat.dat';
+    const char *compute_add = '_compute_lat.dat';
+    char *read_lats_filename = (char *)malloc((strlen(argv[optind+2]) + strlen(read_add) + 1) * sizeof(char));
+    char *compute_lats_filename = (char *)malloc((strlen(argv[optind+2]) + strlen(compute_add) + 1) * sizeof(char));
+    read_lats_filename[0] = 0;
+    compute_lats_filename[0] = 0;
+    strcat(read_lats_filename, argv[optind+2]);
+    strcat(read_lats_filename, read_add);
+    strcat(compute_lats_filename, argv[optind+2]);
+    strcat(compute_lats_filename, compute_add);
+    read_lats = fopen(argv[optind+2], "w");
+    compute_lats = fopen(argv[optind+2], "w");
+    /* end of added stuff */
+
     /* this will exit if the format name is invalid */
     output_formatter_t fmt = output_formatter_create(output_format, snp_fh);
     d->output_formatter = &fmt;
@@ -158,5 +178,10 @@ int main(int argc, char *argv[]) {
     sniper_maqcns_destroy(d->c);
     free(d->ref); free(d);
     fclose(snp_fh);
+
+    free(read_lats_filename);
+    free(compute_lats_filename);
+    fclose(read_lats);
+    fclose(compute_lats);
     return 0;
 }

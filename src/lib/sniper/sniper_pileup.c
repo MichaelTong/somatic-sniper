@@ -4,6 +4,10 @@
 #include "sam.h"
 #include <assert.h>
 #include "somatic_sniper.h"
+#include <time.h>
+
+FILE *read_lats;
+FILE *compute_lats;
 
 typedef struct __linkbuf_t {
 	bam1_t b;
@@ -204,7 +208,16 @@ int get_next_pos(bam_plbuf_t *buf,bamFile fp) {
             // update tid and pos
         }
         bam1_t *b = (bam1_t*)calloc(1, sizeof(bam1_t));
-        if (bam_read1(fp, b) >= 0) {
+        
+        struct timespec tstart={0,0}, tend={0,0};
+        clock_gettime(CLOCK_MONOTONIC, &tstart);
+        ret = bam_read1(fp, b);
+        clock_gettime(CLOCK_MONOTONIC, &tend);
+
+        double time_elapsed = ((double)tend.tv_sec*1.0e6 + 1.0e-3*tend.tv_nsec) - 
+                                ((double)tstart.tv_sec*1.0e6 + 1.0e-3*tstart.tv_nsec);
+        fprintf(read_lats, '%lf\n', time_elapsed);
+        if (ret >= 0) {
             if (!(b->core.flag & buf->flag_mask) && !(b->core.qual < buf->mapq_thresh)) { //skip these reads 
                 bam_copy1(&buf->tail->b, b);
                 buf->tail->beg = b->core.pos; buf->tail->end = bam_calend(&b->core, bam1_cigar(b));
@@ -254,8 +267,14 @@ int bam_sspileup_file(bamFile fp1, bamFile fp2, int mask, int thresh, bam_sspile
             }
         } while(buf2->tid != buf1->tid && ret1 >= 0 && ret2 >= 0);
         if(ret1 > 0 && ret2 > 0) {
+            struct timespec tstart={0,0}, tend={0,0};
+            clock_gettime(CLOCK_MONOTONIC, &tstart);
             assert(buf1->tid == buf2->tid && buf1->pos == buf2->pos); //ensure we don't accidentally report results from desynced buffers
             func(buf1->tid, buf1->pos, ret1, ret2, buf1->pu, buf2->pu, buf1->func_data, snp_fh);
+            clock_gettime(CLOCK_MONOTONIC, &tend);
+            double time_elapsed = ((double)tend.tv_sec*1.0e6 + 1.0e-3*tend.tv_nsec) - 
+                                ((double)tstart.tv_sec*1.0e6 + 1.0e-3*tstart.tv_nsec);
+            fprintf(compute_lats, '%lf\n', time_elapsed);
         }
     }
     bam_plbuf_reset(buf1);  //clear out any remaining data (I hope)

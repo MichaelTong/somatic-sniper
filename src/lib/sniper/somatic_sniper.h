@@ -1,6 +1,7 @@
 #ifndef SOMATIC_SNIPER
 #define SOMATIC_SNIPER
 
+#include <stdlib.h>
 #include "sniper_maqcns.h"
 #include "output_format.h"
 
@@ -45,6 +46,13 @@ typedef int (*bam_sspileup_f)(uint32_t tid, uint32_t pos, int n1, int n2, const 
 extern int isHom[16];
 extern int isHet[16];
 extern int glfBase[10];
+
+/** For timed version code
+ * * read_lats stores read latency for each bam_read1
+ * * compute_lats stores compute latency for each compute iteration
+ * /
+extern FILE* read_lats;
+extern FILE* compute_lats;
 
 
 /* functions */
