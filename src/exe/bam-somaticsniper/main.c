@@ -140,8 +140,8 @@ int main(int argc, char *argv[]) {
     FILE* snp_fh = fopen(argv[optind+2], "w");
     
     /* Added file logic for recording latencies */
-    const char *read_add = '_read_lat.dat';
-    const char *compute_add = '_compute_lat.dat';
+    const char *read_add = "_read_lat.dat";
+    const char *compute_add = "_compute_lat.dat";
     char *read_lats_filename = (char *)malloc((strlen(argv[optind+2]) + strlen(read_add) + 1) * sizeof(char));
     char *compute_lats_filename = (char *)malloc((strlen(argv[optind+2]) + strlen(compute_add) + 1) * sizeof(char));
     read_lats_filename[0] = 0;
