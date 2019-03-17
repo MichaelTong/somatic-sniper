@@ -211,7 +211,7 @@ int get_next_pos(bam_plbuf_t *buf,bamFile fp) {
         
         struct timespec tstart={0,0}, tend={0,0};
         clock_gettime(CLOCK_MONOTONIC, &tstart);
-        ret = bam_read1(fp, b);
+        int ret = bam_read1(fp, b);
         clock_gettime(CLOCK_MONOTONIC, &tend);
 
         double time_elapsed = ((double)tend.tv_sec*1.0e6 + 1.0e-3*tend.tv_nsec) - 
