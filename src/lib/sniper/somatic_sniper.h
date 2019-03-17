@@ -50,7 +50,7 @@ extern int glfBase[10];
 /** For timed version code
  * * read_lats stores read latency for each bam_read1
  * * compute_lats stores compute latency for each compute iteration
- * /
+ */
 extern FILE* read_lats;
 extern FILE* compute_lats;
 
