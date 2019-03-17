@@ -150,8 +150,8 @@ int main(int argc, char *argv[]) {
     strcat(read_lats_filename, read_add);
     strcat(compute_lats_filename, argv[optind+2]);
     strcat(compute_lats_filename, compute_add);
-    read_lats = fopen(argv[optind+2], "w");
-    compute_lats = fopen(argv[optind+2], "w");
+    read_lats = fopen(read_lats_filename, "w");
+    compute_lats = fopen(compute_lats_filename, "w");
     /* end of added stuff */
 
     /* this will exit if the format name is invalid */
