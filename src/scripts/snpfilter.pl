@@ -266,7 +266,7 @@ $read_lats_fh = IO::File->new($read_lats_out_file,"w");
 foreach my $read_lat (@read_lats) {
     print $read_lats_fh $read_lat,"\n";
 }
-$read_lats_fh.close;
+$read_lats_fh->close;
 
 $compute_lats_fh = IO::File->new($compute_lats_out_file,"w");
 foreach my $compute_lat (@compute_lats) {
