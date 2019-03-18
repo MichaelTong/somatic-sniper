@@ -52,6 +52,11 @@ my $ioend;
 my $diff;
 my $cstart;
 my $cend;
+my $elapsed;
+my $read_lats_out_file;
+my $compute_lats_out_file;
+my $read_lats_fh;
+my $compute_lats_fh;
 my @read_lats = ();
 my @compute_lats = ();
 
@@ -257,17 +262,17 @@ while (1) {
     }
 }
 
-$read_lat_fh = IO::File->new($read_lats_out_file,"w");
-foreach $read_lat (@read_lats) {
-    print $read_lat_fh $read_lat,"\n";
+$read_lats_fh = IO::File->new($read_lats_out_file,"w");
+foreach my $read_lat (@read_lats) {
+    print $read_lats_fh $read_lat,"\n";
 }
-$read_lat_fh.close;
+$read_lats_fh.close;
 
-$compute_lat_fh = IO::File->new($compute_lats_out_file,"w");
-foreach $compute_lat (@compute_lats) {
-    print $compute_lat_fh $compute_lat,"\n";
+$compute_lats_fh = IO::File->new($compute_lats_out_file,"w");
+foreach my $compute_lat (@compute_lats) {
+    print $compute_lats_fh $compute_lat,"\n";
 }
-$compute_lat_fh->close;
+$compute_lats_fh->close;
 
 map{$out_fh->print($_->{line}) if $_->{pass}}@snps;
 if(defined($lq_output)){
