@@ -6,12 +6,26 @@ use warnings;
 use IO::File;
 use Getopt::Long;
 
+use Time::HiRes qw( clock_gettime clock_getres clock_nanosleep
+                    ITIMER_REAL ITIMER_VIRTUAL ITIMER_PROF
+                    ITIMER_REALPROF );
+use DateTime;
+use File::Basename;
+
 my $snp_file;
 my $lq_output;
 my $min_mapping_quality = 40;
 my $min_somatic_score = 40;
 my $out_file;
 my $help;
+
+my $iostart;
+my $ioend;
+my $diff;
+my $cstart;
+my $cend;
+my @read_lats = ();
+my @compute_lats = ();
 
 my $opt_result;
 
@@ -52,7 +66,30 @@ my $snp_fh = IO::File->new($snp_file) or die "Unable to open $snp_file for readi
 
 my $sniper_vcf = 0; #attempt to auto-detect whether or not the user is providing VCF or classic input
 
-while (my $snp = $snp_fh->getline) {
+$read_lats_out_file = basename($out_file) . '.read_lats.dat';
+$compute_lats_out_file = basename($out_file) . '.compute_lats.dat';
+
+#while (my $snp = $snp_fh->getline) {
+$cstart = 0;
+while (1){
+    $cend = DateTime->from_epoch(epoch=>time);
+    if ($cstart != 0) {
+        $diff = $ioend - $iostart;
+        $elapsed = $diff->seconds * 1000000.0  + $diff->nanoseconds / 1000.0;
+        unshift(@compute_lats, $elapsed);
+    }
+
+    $iostart = DateTime->from_epoch(epoch=>time);
+    my $snp = $snp_fh->getline;
+    $ioend = DateTime->from_epoch(epoch=>time);
+    if (!$snp) {
+        last;
+    }
+    $diff = $ioend - $iostart;
+    $elapsed = $diff->seconds * 1000000.0  + $diff->nanoseconds / 1000.0;
+    unshift(@read_lats, $elapsed);
+    
+    $cstart = DateTime->from_epoch(epoch=>time);
     if($snp =~ /^##fileformat=VCF/) {   #not checking version. Note that this also doesn't attempt to verify that this is a sniper output file.
         $sniper_vcf = 1;
     }
@@ -99,6 +136,19 @@ while (my $snp = $snp_fh->getline) {
         print $lq_out_fh $snp,"\n" if($lq_out_fh);
     }
 }
+
+$read_lat_fh = IO::File->new($read_lats_out_file,"w");
+foreach $read_lat (@read_lats) {
+    print $read_lat_fh $read_lat,"\n";
+}
+$read_lat_fh.close;
+
+$compute_lat_fh = IO::File->new($compute_lats_out_file,"w");
+foreach $compute_lat (@compute_lats) {
+    print $compute_lat_fh $compute_lat,"\n";
+}
+$compute_lat_fh->close;
+
 $snp_fh->close;
 $out_fh->close;
 if(defined($lq_output)){
