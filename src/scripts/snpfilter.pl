@@ -6,9 +6,7 @@ use warnings;
 use IO::File;
 use Getopt::Long;
 
-use Time::HiRes qw( clock_gettime clock_getres clock_nanosleep
-                    ITIMER_REAL ITIMER_VIRTUAL ITIMER_PROF
-                    ITIMER_REALPROF );
+use Time::HiRes qw(time);
 use DateTime;
 use File::Basename;
 
