@@ -142,8 +142,8 @@ my $snp_fh = IO::File->new($snp_file) or die "Unable to open $snp_file for readi
 
 my $sniper_vcf = 0; #attempt to auto-detect whether or not the user is providing VCF or classic input
 
-$read_lats_out_file = basename($out_file) . '.read_lats.dat';
-$compute_lats_out_file = basename($out_file) . '.compute_lats.dat';
+$read_lats_out_file = basename($out_file) . '.snpfilter.read_lats.dat';
+$compute_lats_out_file = basename($out_file) . '.snpfilter.compute_lats.dat';
 
 # while (my $snp = $snp_fh->getline) {
 $cstart = 0;
