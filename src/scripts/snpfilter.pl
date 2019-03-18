@@ -109,7 +109,7 @@ if ($indel_file) {
     while (1) {
         $cend = DateTime->from_epoch(epoch=>time);
         if ($cstart != 0) {
-            $diff = $ioend - $iostart;
+            $diff = $cend - $cstart;
             $elapsed = $diff->seconds * 1000000.0  + $diff->nanoseconds / 1000.0;
             unshift(@compute_lats, $elapsed);
         }
@@ -155,7 +155,7 @@ $cstart = 0;
 while (1) {
     $cend = DateTime->from_epoch(epoch=>time);
     if ($cstart != 0) {
-        $diff = $ioend - $iostart;
+        $diff = $cend - $cstart;
         $elapsed = $diff->seconds * 1000000.0  + $diff->nanoseconds / 1000.0;
         unshift(@compute_lats, $elapsed);
     }
